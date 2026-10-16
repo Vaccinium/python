@@ -23,8 +23,36 @@ def analyze_activity(user_ids: list[str]) -> tuple[dict[str, int], int, str]:
     Пример:
         analyze_activity(["a", "b", "a"]) -> ({"a": 2, "b": 1}, 2, "a")
     """
-    # TODO: ваш код здесь
-    ...
+    # Словарь, в котором будем считать действия: {id: сколько раз встретился}
+    counts = {}
+
+    # Проходим по всем действиям в списке
+    for user_id in user_ids:
+        if user_id in counts:
+            # Этот id уже встречался - увеличиваем счётчик на 1
+            counts[user_id] = counts[user_id] + 1
+        else:
+            # Этот id встретился впервые - записываем его со счётом 1
+            counts[user_id] = 1
+
+    # Уникальных пользователей столько, сколько ключей в словаре
+    unique_count = len(counts)
+
+    # Ищем самого активного пользователя
+    top_user = ""   # id лучшего на данный момент
+    top_count = 0   # его количество действий
+
+    # Ключи в словаре лежат в порядке первого появления в списке,
+    # поэтому при ничьей останется тот, кто встретился раньше
+    for user_id in counts:
+        # Знак строго "больше" (не ">="), чтобы при равном счёте
+        # победитель не менялся
+        if counts[user_id] > top_count:
+            top_count = counts[user_id]
+            top_user = user_id
+
+    # Возвращаем три значения сразу (Python упакует их в кортеж)
+    return counts, unique_count, top_user
 
 
 if __name__ == "__main__":
