@@ -28,8 +28,35 @@ def average_ctr(records: list[dict]) -> float:
         average_ctr([{"ad_id": "a", "impressions": 100, "clicks": 10}])
         -> 0.1
     """
-    # TODO: ваш код здесь
-    ...
+    # Сумма CTR всех чистых записей
+    total_ctr = 0.0
+    # Сколько чистых записей нашли
+    clean_count = 0
+
+    for record in records:
+        impressions = record["impressions"]
+        clicks = record["clicks"]
+
+        # Проверяем, что запись грязная: если да, пропускаем её
+        if impressions <= 0:
+            continue
+        if clicks < 0:
+            continue
+        if clicks > impressions:
+            continue
+
+        # Запись чистая: считаем её CTR и добавляем к общей сумме
+        ctr = clicks / impressions
+        total_ctr = total_ctr + ctr
+        clean_count = clean_count + 1
+
+    # Если чистых записей нет, возвращаем 0.0
+    # (эта проверка защищает от деления на ноль)
+    if clean_count == 0:
+        return 0.0
+
+    # Среднее арифметическое = сумма CTR / количество записей
+    return total_ctr / clean_count
 
 
 if __name__ == "__main__":
