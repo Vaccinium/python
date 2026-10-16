@@ -25,8 +25,17 @@ def filter_and_sort(
         )
         -> [{"campaign_id": "a", "clicks": 10}]
     """
-    # TODO: ваш код здесь
-    ...
+    # Новый список для кампаний, прошедших фильтр
+    filtered = []
+    for campaign in campaigns:
+        # predicate - это функция, которую нам передали: она отвечает True или False
+        if predicate(campaign):
+            filtered.append(campaign)
+
+    # sorted() сам создаёт новый список. Если key равен None,
+    # sorted сортирует элементы как есть, так что отдельная проверка не нужна
+    result = sorted(filtered, key=key, reverse=reverse)
+    return result
 
 
 # TODO: замените None на lambda-выражение (именно lambda, не def).
@@ -36,7 +45,10 @@ def filter_and_sort(
 # Если impressions == 0, считать CTR равным 0 (а не бросать исключение).
 #
 # Использование: sorted(campaigns, key=ctr_desc_then_id_asc)
-ctr_desc_then_id_asc = None
+ctr_desc_then_id_asc = lambda c: (
+    (-c["clicks"] / c["impressions"]) if c["impressions"] > 0 else 0,
+    c["campaign_id"],
+)
 
 
 if __name__ == "__main__":

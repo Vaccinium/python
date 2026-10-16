@@ -27,9 +27,35 @@ def aggregate_campaigns(*reports: list[dict], sort_by: str = "ctr", reverse: boo
         )
         -> [{..., "campaign_id": "a", "ctr": 0.05, ...}, {..., "campaign_id": "b", "ctr": 0.03, ...}]
     """
-    # TODO: ваш код здесь
-    ...
+    result = []
 
+    # reports - это кортеж из списков, проходим по каждому отчёту
+    for report in reports:
+        # и по каждой записи внутри отчёта
+        for record in report:
+            # Делаем копию, чтобы не менять исходный словарь
+            new_record = record.copy()
+
+            # Считаем CTR (0.0, если показов нет)
+            if new_record["impressions"] == 0:
+                new_record["ctr"] = 0.0
+            else:
+                new_record["ctr"] = new_record["clicks"] / new_record["impressions"]
+
+            # Считаем CPC (0.0, если кликов нет)
+            if new_record["clicks"] == 0:
+                new_record["cpc"] = 0.0
+            else:
+                new_record["cpc"] = new_record["spend"] / new_record["clicks"]
+
+            result.append(new_record)
+    # Вспомогательная функция: говорит sorted, по какому полю сравнивать записи
+    def get_sort_value(record):
+        return record[sort_by]
+
+    # Сортируем; reverse=True значит "по убыванию"
+    result = sorted(result, key=get_sort_value, reverse=reverse)
+    return result
 
 def log_alert(campaign_id: str, message: str, log: list[str] | None = None, **tags) -> list[str]:
     """
@@ -52,8 +78,25 @@ def log_alert(campaign_id: str, message: str, log: list[str] | None = None, **ta
         log_alert("c", "spend spike", severity="high", channel="email")
         -> ["c: spend spike [channel=email, severity=high]"]
     """
-    # TODO: ваш код здесь
-    ...
+    # Если лог не передали, создаём новый пустой список внутри функции.
+    # Так каждый вызов без log получает свой список
+    if log is None:
+        log = []
+
+    # Основная часть строки
+    line = f"{campaign_id}: {message}"
+
+    # Если теги есть, дописываем их в квадратных скобках
+    if len(tags) > 0:
+        tag_parts = []
+        # sorted(tags) даёт имена тегов по алфавиту
+        for name in sorted(tags):
+            # f-строка сама превратит любое значение (в том числе число) в текст
+            tag_parts.append(f"{name}={tags[name]}")
+        line = line + " [" + ", ".join(tag_parts) + "]"
+
+    log.append(line)
+    return log
 
 
 if __name__ == "__main__":
