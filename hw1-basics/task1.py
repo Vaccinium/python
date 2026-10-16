@@ -18,15 +18,23 @@ def decode_caesar_cipher(text: str, shift: int) -> str:
 
     Пример: decode_caesar_cipher("Khoor!", 3) -> "Hello!"
     """
-    resultat = []
-    for letter in text:
-        if "a" <= letter <= "z":
-            resultat.append(chr((ord(letter) - ord("a") - shift) % 26 + ord("a")))
-        elif "A" <= letter <= "Z":
-            resultat.append(chr((ord(letter) - ord("A") - shift) % 26 + ord("A")))
+    small_letters = "abcdefghijklmnopqrstuvwxyz"
+    big_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+    result = ""
+    for symbol in text:
+        if symbol in small_letters:
+            position = small_letters.index(symbol)
+            new_position = (position - shift) % 26
+            result = result + small_letters[new_position]
+        elif symbol in big_letters:
+            position = big_letters.index(symbol)
+            new_position = (position - shift) % 26
+            result = result + big_letters[new_position]
         else:
-            resultat.append(letter)
-    return "".join(resultat)
+            result = result + symbol
+
+    return result
 
 
 if __name__ == "__main__":
