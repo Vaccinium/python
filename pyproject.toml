@@ -1,0 +1,28 @@
+[project]
+name = "hse-homeworks"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = ["ruff>=0.6"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+# E501: длина строки 120 символов действует и на комментарии/докстринги, поэтому
+# явно включаем её - по умолчанию ruff проверяет line-length только в форматтере.
+extend-select = ["E501"]
+# PIE790: в шаблонах домашек "..." - намеренный плейсхолдер вместо TODO-тела
+# функции, а не лишний оператор.
+ignore = ["PIE790"]
+
+[tool.ruff.lint.per-file-ignores]
+# Шаблоны заданий «почините код ассистента»: в них намеренно лежит код с ошибками,
+# это часть условия. Линтер для этих файлов не показателен, поэтому он их пропускает.
+"hw1-basics/task5.py" = ["ALL"]
+"hw3-oop/task4.py" = ["ALL"]
